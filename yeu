@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Love PRO FIX 💖</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  overflow:hidden;
+  font-family:Segoe UI;
+  background:linear-gradient(-45deg,#ff6a88,#ff99ac,#fad0c4,#ffdde1);
+  background-size:400% 400%;
+  animation:bg 10s infinite;
+  color:white;
+}
+
+@keyframes bg{
+  0%{background-position:0%}
+  50%{background-position:100%}
+  100%{background-position:0%}
+}
+
+/* SCREEN */
+.screen{
+  position:absolute;
+  width:100%;
+  height:100%;
+  display:none;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+  z-index:2;
+}
+.active{
+  display:flex;
+  animation:fade 1s;
+}
+@keyframes fade{
+  from{opacity:0;transform:scale(0.9)}
+  to{opacity:1;transform:scale(1)}
+}
+
+/* 🎆 CANVAS FIX */
+#fireworks{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  z-index:1;
+  pointer-events:none; /* QUAN TRỌNG */
+}
+
+/* 🎁 GIFT */
+.gift{
+  width:120px;height:120px;
+  background:red;border-radius:15px;
+  position:absolute;
+  animation:move 3s infinite alternate;
+  cursor:pointer;
+}
+.gift:before{
+  content:"";
+  position:absolute;
+  width:120px;height:20px;
+  background:yellow;top:50px;
+}
+@keyframes move{
+  from{left:0} to{left:80%}
+}
+
+/* 🌸 FLOWER */
+.flower{
+  position:absolute;
+  width:15px;height:15px;
+  background:pink;border-radius:50%;
+  animation:fall linear infinite;
+  z-index:1;
+}
+@keyframes fall{
+  to{transform:translateY(100vh)}
+}
+
+/* ❤️ HEART 3D FIX */
+.scene{
+  width:200px;height:200px;
+  perspective:800px;
+}
+.heart3d{
+  width:120px;height:120px;
+  position:relative;
+  transform-style:preserve-3d;
+  animation:spin 6s linear infinite;
+  cursor:pointer;
+}
+.heart3d .inner{
+  width:100%;
+  height:100%;
+  position:absolute;
+  animation:beat 1s infinite;
+}
+.heart3d div{
+  position:absolute;
+  width:120px;height:120px;
+  background:red;
+  transform:rotate(-45deg);
+}
+.heart3d div:before,
+.heart3d div:after{
+  content:"";
+  position:absolute;
+  width:120px;height:120px;
+  background:red;border-radius:50%;
+}
+.heart3d div:before{top:-60px}
+.heart3d div:after{left:60px}
+
+@keyframes spin{
+  from{transform:rotateY(0)}
+  to{transform:rotateY(360deg)}
+}
+@keyframes beat{
+  50%{transform:scale(1.2)}
+}
+
+/* INPUT */
+input,button{
+  padding:10px;
+  border:none;border-radius:10px;
+  margin:5px;
+}
+
+/* LETTER */
+#letter{
+  background:white;
+  color:black;
+  width:70%;
+  padding:25px;
+  border-radius:20px;
+  box-shadow:0 0 40px pink;
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="fireworks"></canvas>
+
+<!-- SCREEN 1 -->
+<div class="screen active" id="s1">
+  <div class="gift" onclick="openGift()"></div>
+  <h2 style="position:absolute;bottom:20%">👉 Click to open 🎁</h2>
+</div>
+
+<!-- SCREEN 2 -->
+<div class="screen" id="s2">
+  <h2>Bạn biết hôm nay là ngày gì không?</h2>
+  <input id="ans">
+  <button onclick="checkAns()">OK</button>
+  <p id="rs"></p>
+</div>
+
+<!-- SCREEN 3 -->
+<div class="screen" id="s3">
+  <div class="scene">
+    <div class="heart3d" onclick="nextPass()">
+      <div class="inner">
+        <div></div>
+      </div>
+    </div>
+  </div>
+  <h3>👉 Nhấp vào trái tim</h3>
+</div>
+
+<!-- SCREEN 4 -->
+<div class="screen" id="s4">
+  <h3>Ngày mấy tháng mấy chúng ta quen nhau?</h3>
+  <input id="pass">
+  <button onclick="checkPass()">Xác nhận</button>
+  <p id="prs"></p>
+</div>
+
+<!-- SCREEN 5 -->
+<div class="screen" id="s5">
+  <div id="letter">
+    <h2>💌 Gửi em – cô gái quan trọng nhất cuộc đời anh</h2>
+    <p>
+Hôm nay là một ngày thật đặc biệt... ❤️<br><br>
+Chúc mừng sinh nhật em yêu!<br><br>
+Cảm ơn em vì tất cả 💖
+    </p>
+  </div>
+</div>
+
+<script>
+const canvas=document.getElementById("fireworks");
+const ctx=canvas.getContext("2d");
+
+function resize(){
+  canvas.width=innerWidth;
+  canvas.height=innerHeight;
+}
+resize();
+window.onresize=resize;
+
+let particles=[];
+
+function firework(){
+  for(let i=0;i<60;i++){
+    particles.push({
+      x:innerWidth/2,
+      y:innerHeight/2,
+      dx:(Math.random()-0.5)*8,
+      dy:(Math.random()-0.5)*8,
+      life:80
+    });
+  }
+}
+
+function animate(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach((p,i)=>{
+    p.x+=p.dx;
+    p.y+=p.dy;
+    p.life--;
+
+    ctx.fillStyle="yellow";
+    ctx.fillRect(p.x,p.y,2,2);
+
+    if(p.life<=0)particles.splice(i,1);
+  });
+  requestAnimationFrame(animate);
+}
+animate();
+
+function show(id){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+
+function openGift(){
+  firework();
+  for(let i=0;i<40;i++){
+    let f=document.createElement("div");
+    f.className="flower";
+    f.style.left=Math.random()*100+"%";
+    f.style.animationDuration=(2+Math.random()*3)+"s";
+    document.body.appendChild(f);
+  }
+  show("s2");
+}
+
+function checkAns(){
+  let a=document.getElementById("ans").value.toLowerCase();
+  let r=document.getElementById("rs");
+
+  if(a.includes("sinh nhật")){
+    r.innerHTML="🎉 Đúng rồi!";
+  }else{
+    r.innerHTML="😜 Ngốc thật, hôm nay là ngày 1 cô công chúa ra đời!";
+  }
+
+  setTimeout(()=>show("s3"),2000);
+}
+
+function nextPass(){ show("s4"); }
+
+function checkPass(){
+  let p=document.getElementById("pass").value;
+  let r=document.getElementById("prs");
+
+  if(p=="6/5"){
+    r.innerHTML="🥰 Chính xác!";
+  }else{
+    r.innerHTML="😡 Sai rồi! Là 6/5 đó!";
+  }
+
+  setTimeout(()=>show("s5"),1500);
+}
+</script>
+
+</body>
+</html>
